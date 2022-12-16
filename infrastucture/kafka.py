@@ -1,11 +1,8 @@
 import logging
-
 import orjson
 from datetime import datetime
 from pykafka import KafkaClient
 from pykafka.exceptions import SocketDisconnectedError, LeaderNotAvailable
-
-from modules.stock_data_generator import StockData
 
 
 class KafkaProducer:
@@ -19,7 +16,7 @@ class KafkaProducer:
             self._producer.produce(orjson.dumps((datetime.utcnow().replace(microsecond=0),
                                                  value)))
             logging.info(orjson.dumps((datetime.utcnow().replace(microsecond=0),
-                                                 value)))
+                                       value)))
         except (SocketDisconnectedError, LeaderNotAvailable) as e:
             self._producer = self._topic.get_producer()
             self._producer.stop()
