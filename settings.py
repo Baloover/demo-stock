@@ -1,7 +1,7 @@
 from envparse import Env
 
 env = Env()
-env.read_envfile()
+# env.read_envfile()
 
 HOST = env('HOST', default='0.0.0.0')
 PORT = env.int('PORT', default=8000)
@@ -11,9 +11,9 @@ DEBUG = env.bool('DEBUG', default=False)
 ####################################
 # Kafka
 ####################################
-KAFKA_URL = env('KAFKA_URL', default='0.0.0.0')
-
+KAFKA_URL = env('KAFKA_URL', default='165.227.162.79:9092')
+KAFKA_TOPIC_PREFIX = env('KAFKA_TOPIC_PREFIX', default='dev_')
 ####################################
-# Consumers
+# Producers
 ####################################
-TICKERS_LIST = env.list('TICKERS_LIST')
+TICKERS_LIST = env.list('TICKERS_LIST', default="test1")

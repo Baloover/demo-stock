@@ -1,25 +1,24 @@
 import logging
-from typing import List
-
+from typing import List, Callable
 from fastapi import FastAPI
 import asyncio
 from apscheduler.executors.asyncio import AsyncIOExecutor
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import async_timeout
 from dataclasses import dataclass
-from modules.stock_data_generator import StockData
 
 
 @dataclass
 class DataGenerationJob:
     ticker: str
-    data_generator: StockData
+    data_generator: Callable
+    data_interface: Callable
 
 
 class JobRunner:
-    async def execute(self, callback, timeout: int):
+    async def execute(self, callback: DataGenerationJob, timeout: int):
         async with async_timeout.timeout(timeout):
-            return await callback()
+            return await callback.data_interface(callback.data_generator())
 
 
 class SchedulerApp(FastAPI):
