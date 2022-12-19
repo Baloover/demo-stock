@@ -11,9 +11,10 @@ DEBUG = env.bool('DEBUG', default=False)
 ####################################
 # Kafka
 ####################################
-KAFKA_URL = env('KAFKA_URL', default='165.227.162.79:9092')
+KAFKA_URL = env('KAFKA_URL', default='localhost:9092')
 KAFKA_TOPIC_PREFIX = env('KAFKA_TOPIC_PREFIX', default='dev_')
 ####################################
 # Producers
 ####################################
-TICKERS_LIST = env.list('TICKERS_LIST', default="test1")
+TICKERS_LIST = env.list('TICKERS_LIST', default=['test1','test2'])
+
