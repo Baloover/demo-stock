@@ -6,26 +6,27 @@ from apscheduler.executors.asyncio import AsyncIOExecutor
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import async_timeout
 from dataclasses import dataclass
+from infrastucture.kafka import KafkaProducer
 
 
 @dataclass
 class DataGenerationJob:
     ticker: str
     data_generator: Callable
-    data_interface: Callable
+    data_interface: KafkaProducer
 
 
-class JobRunner:
+class StockGeneratorJobRunner:
     async def execute(self, callback: DataGenerationJob, timeout: int):
         async with async_timeout.timeout(timeout):
-            return await callback.data_interface(callback.data_generator())
+            return await callback.data_interface.send_point(callback.data_generator())
 
 
 class SchedulerApp(FastAPI):
     scheduler: AsyncIOScheduler
     tasks: set[asyncio.Task] = set()
     execute_lock = asyncio.Lock()
-    runner: JobRunner = JobRunner()
+    runner: StockGeneratorJobRunner = StockGeneratorJobRunner()
     job_store: List[DataGenerationJob] = []
 
     def initialize_scheduler(self):

@@ -7,7 +7,6 @@ class StockData:
     def __init__(self, ticker: str):
         self._ticker = f"{KAFKA_TOPIC_PREFIX}{ticker}"
         self._stock_value = 0
-        self._epoch = 0
 
     @staticmethod
     def _generate_movement():

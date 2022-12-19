@@ -22,26 +22,24 @@ async def ping():
     return
 
 
-@app.get("/health")
-async def health():
-
-    return {"message": "ok"}
-
-
 @app.get("/status")
 async def status(request: Request):
-    request.app.kafka_client()
-    return {"message": "ok"}
+    health_status = "healthy" if all(job.data_interface.is_healthy() for job in request.app.job_store) else "unhealthy"
+    return {
+        "total_jobs": len(request.app.job_store),
+        "heath_status": health_status,
+        "ticker_list": [job.ticker for job in request.app.job_store],
+    }
 
 
 @app.on_event('startup')
 async def startup_producers():
     app.initialize_scheduler()
     for ticker in TICKERS_LIST:
-        data_generator = StockData(ticker=str(ticker))
-        job = DataGenerationJob(str(ticker),
+        data_generator = StockData(ticker=ticker)
+        job = DataGenerationJob(ticker,
                                 data_generator.generate_point,
-                                KafkaProducer(app.kafka_client, data_generator.get_ticker()).send_point)
+                                KafkaProducer(app.kafka_client, data_generator.get_ticker()))
         app.job_store.append(job)
         app.scheduler.add_job(app.execute,
                               trigger=CronTrigger(second='*'),
