@@ -9,7 +9,7 @@ class KafkaProducer:
     def __init__(self, kafka_client: KafkaClient, ticker: str):
         self._kafka_client = kafka_client
         self._topic = self._kafka_client.topics[ticker]
-        self._producer = self._topic.get_producer(linger_ms=0)
+        self._producer = self._topic.get_producer(linger_ms=1000)
         self._last_sent_time: datetime | None = None
 
     async def send_point(self, value: int) -> None:
